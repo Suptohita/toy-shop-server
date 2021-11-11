@@ -1,6 +1,8 @@
 const express = require('express')
 const cors = require('cors')
-const {MongoClient} = require('mongodb')
+const { MongoClient } = require('mongodb')
+const ObjectId = require('mongodb').ObjectId
+
 
 require('dotenv').config()
 
@@ -18,22 +20,37 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 
 
 async function run() {
-    try{
+    try {
         await client.connect()
-        
+
         const database = client.db('toy-shop')
         const productsCollection = database.collection('products-collection')
+        const orderCollection = database.collection('orders-collection')
 
         // get all products 
-        app.get('/allProducts', async(req, res) => {
+        app.get('/allProducts', async (req, res) => {
             const cursor = productsCollection.find({})
             const products = await cursor.toArray()
             res.send(products)
         })
 
+        // get specific product with id 
+        app.get('/purchase/:id', async (req, res) => {
+            const id = req.params.id
+            const query = { _id: ObjectId(id) }
+            const service = await productsCollection.findOne(query)
+            res.send(service)
+        })
+
+        // place order 
+        app.post('/purchase', async (req, res) => {
+            const data = req.body
+            const result = await orderCollection.insertOne(data)
+            res.send(result)
+        })
 
     }
-    finally{
+    finally {
         // await client.close()
     }
 }
@@ -42,7 +59,7 @@ run().catch(console.dir)
 
 
 // testing 
-app.get('/', (req, res) =>{
+app.get('/', (req, res) => {
     res.send('Server Running...')
 })
 
