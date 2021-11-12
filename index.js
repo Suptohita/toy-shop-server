@@ -26,6 +26,7 @@ async function run() {
         const database = client.db('toy-shop')
         const productsCollection = database.collection('products-collection')
         const orderCollection = database.collection('orders-collection')
+        const reviewCollection = database.collection('review-collection')
 
         // get all products 
         app.get('/allProducts', async (req, res) => {
@@ -56,10 +57,18 @@ async function run() {
             res.send(orders)
         })
 
+        // delete order 
         app.delete('/myorders/deleteorder/:id', async(req, res) => {
             const orderId = req.params.id
             const query = {_id: ObjectId(orderId)}
             const result = await orderCollection.deleteOne(query)
+            res.send(result)
+        })
+
+        // taking user review
+        app.post('/review/submit', async(req, res) => {
+            const data = req.body
+            const result = await reviewCollection.insertOne(data)
             res.send(result)
         })
 
