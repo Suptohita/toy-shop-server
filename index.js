@@ -49,6 +49,13 @@ async function run() {
             res.send(result)
         })
 
+        // my orders 
+        app.get('/myOrders', async(req, res)=>{
+            const cursor = orderCollection.find({})
+            const orders = await cursor.toArray()
+            res.send(orders)
+        })
+
     }
     finally {
         // await client.close()
