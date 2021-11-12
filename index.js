@@ -72,6 +72,13 @@ async function run() {
             res.send(result)
         })
 
+        //get review
+        app.get('/showreview', async(req, res) => {
+            const cursor = reviewCollection.find({})
+            const review = await cursor.toArray()
+            res.send(review)
+        })
+
     }
     finally {
         // await client.close()
