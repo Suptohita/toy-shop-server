@@ -99,6 +99,41 @@ async function run() {
             res.send(review)
         })
 
+        //make admin
+        app.put('/makeadmin/submit',async(req, res)=>{
+            const adminEmail = req.body
+            const filter = {email: adminEmail.email}
+            const option = {upsert: true}
+            const updateDoc = {$set:{userStatus: 'admin'}}
+            const result = await userCollection.updateOne(filter, updateDoc, option)
+            res.json(result)
+        })
+
+        //delete a single product
+        app.delete('/product/delete/:id', async(req, res) => {
+            const orderId = req.params.id
+            const query = {_id: ObjectId(orderId)}
+            const result = await productsCollection.deleteOne(query)
+            res.send(result)
+        })
+
+        //add a product
+        app.post('/addproduct', async(req, res) => {
+            const data = req.body 
+            const result = await productsCollection.insertOne(data)
+            res.send(result)
+        })
+
+        // update order status 
+        app.get('/updateorderstatus/:id', async(req, res)=> {
+            const id = req.params.id
+            const filter = {_id: ObjectId(id)}
+            console.log(filter)
+            const updateDoc = {$set:{status: 'shipped'}}
+            const result = await orderCollection.updateOne(filter, updateDoc)
+            res.send(result)
+        })
+
     }
     finally {
         // await client.close()
