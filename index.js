@@ -24,9 +24,29 @@ async function run() {
         await client.connect()
 
         const database = client.db('toy-shop')
+        const userCollection = database.collection('users-collection')
         const productsCollection = database.collection('products-collection')
         const orderCollection = database.collection('orders-collection')
         const reviewCollection = database.collection('review-collection')
+
+        // collect user
+        app.post('/addUser', async(req, res) => {
+            const data = req.body
+            const result = await userCollection.insertOne(data)
+            res.send(result)
+        })
+
+        // send user  for admin login
+        app.get('/getuser/:email', async(req, res) => {
+            const email = req.params.email
+            const query = {email: email}
+            const user = await userCollection.findOne(query)
+            let isAdmin = false
+            if(user?.userStatus === "admin"){
+                isAdmin = true
+            }
+            res.json({admin: isAdmin})
+        })
 
         // get all products 
         app.get('/allProducts', async (req, res) => {
