@@ -125,7 +125,8 @@ async function run() {
         })
 
         // update order status 
-        app.get('/updateorderstatus/:id', async(req, res)=> {
+        app.put('/updateorderstatus/:id', async(req, res)=> {
+            console.log('hitting...')
             const id = req.params.id
             const filter = {_id: ObjectId(id)}
             console.log(filter)
